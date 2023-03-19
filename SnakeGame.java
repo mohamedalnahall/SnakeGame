@@ -158,7 +158,7 @@ class Platform extends JPanel {
         Font font = new Font("Helvetica", Font.BOLD, 12);
         g2.setColor(Color.white);
         g2.setFont(font);
-        g2.drawString("Snake Length : " + snake.length, Unit, Unit+12);
+        g2.drawString("Score : " + (snake.length - StartLength), Unit, Unit+12);
 
         if(gameOver || pause || finish) {
             String msg = (gameOver)? "Game Over" : (finish)? "Congratulation" : "Paused";
