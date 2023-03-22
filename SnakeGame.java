@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Random;
+import java.util.LinkedList;
 
 public class SnakeGame extends JFrame{
 
@@ -55,22 +56,23 @@ class Platform extends JPanel {
             }
 
             if(!pause && !gameOver) {
+                Direction lastDir = (snake.asyncDirs.size() > 0)? snake.asyncDirs.getLast() : snake.dirs[0];
                 switch (e.getKeyCode()) {
                     case 37:
-                        if (snake.dirs[0] != Direction.Left && snake.dirs[0] != Direction.Right)
-                            asyncDir = Direction.Left;
+                        if (lastDir != Direction.Left && lastDir != Direction.Right)
+                            snake.asyncDirs.add(Direction.Left);
                         break;
                     case 38:
-                        if (snake.dirs[0] != Direction.Up && snake.dirs[0] != Direction.Down)
-                            asyncDir = Direction.Up;
+                        if (lastDir != Direction.Up && lastDir != Direction.Down)
+                            snake.asyncDirs.add(Direction.Up);
                         break;
                     case 39:
-                        if (snake.dirs[0] != Direction.Left && snake.dirs[0] != Direction.Right)
-                            asyncDir = Direction.Right;
+                        if (lastDir != Direction.Left && lastDir != Direction.Right)
+                            snake.asyncDirs.add(Direction.Right);
                         break;
                     case 40:
-                        if (snake.dirs[0] != Direction.Up && snake.dirs[0] != Direction.Down)
-                            asyncDir = Direction.Down;
+                        if (lastDir != Direction.Up && lastDir != Direction.Down)
+                            snake.asyncDirs.add(Direction.Down);
                         break;
                 }
             }
@@ -80,7 +82,6 @@ class Platform extends JPanel {
     private final Random rnd = new Random();
     private final int Width, Height, Unit, StartLength;
     private final Snake snake;
-    private Direction asyncDir;
     private int xFood, yFood;
     private boolean gameOver = false, pause = false, finish = false;
     private final BufferedImage head, body1, body2, bodyTurn1_1, bodyTurn1_2, bodyTurn2_1, bodyTurn2_2, tail, tailTurn, tailTurn2;
@@ -220,6 +221,7 @@ class Platform extends JPanel {
         int length, maxLength;
         int[] x,y;
         Direction[] dirs;
+        LinkedList<Direction> asyncDirs = new LinkedList<>();
 
         public Snake(Direction direction, int length, int xPos, int yPos){
             maxLength = (Width * Height) / (Unit * Unit);
@@ -231,9 +233,7 @@ class Platform extends JPanel {
         }
 
         public void init(Direction direction, int length, int xPos, int yPos){
-            asyncDir = direction;
             this.length = length;
-
             dirs[0] = direction;
 
             x[0] = (xPos < 0) ? 0 : Math.min(xPos, Width - Unit);
@@ -262,7 +262,8 @@ class Platform extends JPanel {
                 x[i] = x[i - 1];
                 y[i] = y[i - 1];
             }
-            dirs[0] = asyncDir;
+
+            if (asyncDirs.size() > 0) dirs[0] = asyncDirs.poll();
 
             int x_temp = (dirs[0] == Direction.Left)? -Unit : (dirs[0] == Direction.Right)? Unit : 0;
             int y_temp = (dirs[0] == Direction.Up)? -Unit : (dirs[0] == Direction.Down)? Unit : 0;
